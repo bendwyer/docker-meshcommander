@@ -2,8 +2,8 @@
 name: deploy_new_container
 on: workflow_dispatch
 jobs:
-  check_meshcommander_version:
-    name: Check MeshCommander version
+  get_meshcommander_version:
+    name: Get MeshCommander version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v2
@@ -11,6 +11,12 @@ jobs:
           node-version: '14'
       - run: npm install --global latest-version-cli
       - run: echo "::set-output name=version::$(latest-version meshcommander)"
-        id: version_check
+        id: get_version
     outputs:
-      meshcommander_version: ${{ steps.version_check.outputs.version }}
+      meshcommander_version: ${{ steps.get_version.outputs.version }}
+  check_meshcommander_version:
+    name: Check MeshCommander version
+    runs-on: ubuntu-latest
+    needs: get_meshcommander_version
+    steps:
+      - run: echo ${{ needs.get_meshcommander_version.outputs.meshcommander_version }}
