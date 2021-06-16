@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  meshcommander:
+    image: bendwyer/meshcommander
+    container_name: meshcommander
+    restart: always
+    ports:
+      # - 127.0.0.1:3000:3000
+      # - 3000:3000
