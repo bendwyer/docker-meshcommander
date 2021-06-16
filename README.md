@@ -5,7 +5,7 @@ Dockerized MeshCommander.
 Build
 -----
 
-Check for the [latest version]((https://www.npmjs.com/package/meshcommander?activeTab=versions)) of MeshCommander and add it as a command-line variable:
+Check for the [latest version](https://www.npmjs.com/package/meshcommander?activeTab=versions) of MeshCommander and add it as a command-line variable:
 
     packer build -var "meshcommander_version=0.9.0-d" . 
 
