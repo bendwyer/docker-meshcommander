@@ -6,7 +6,9 @@ jobs:
     name: Check MeshCommander version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - run: npm install --global latest-version-cli
       - run: echo "::set-output name=version::$(latest-version meshcommander)"
         id: version_check
