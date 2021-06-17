@@ -4,7 +4,15 @@ on:
   workflow_dispatch:
   create:
     tags:
-       - '*'
+       - 'v*'
+  push:
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'master'
 jobs:
   get_meshcommander_version:
     name: Get MeshCommander version
@@ -31,7 +39,7 @@ jobs:
         run: packer validate -syntax-only .
       - name: Packer build
         run: packer build -color=false -on-error=abort -var meshcommander_version=${{ needs.get_meshcommander_version.outputs.meshcommander_version }} .
-      - name: Get Docker image tags
+      - name: Generate docker image tags
         id: meta
         uses: docker/metadata-action@v3
         with:
@@ -42,4 +50,15 @@ jobs:
           flavor: |
             latest=auto
             suffix=_${{ needs.get_meshcommander_version.outputs.meshcommander_version }}
-      - run: echo ${{ steps.meta.outputs.tags }}
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
