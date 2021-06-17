@@ -27,3 +27,9 @@ jobs:
         run: packer validate -syntax-only .
       - name: Packer build
         run: packer build -color=false -on-error=abort -var meshcommander_version=${{ needs.get_meshcommander_version.outputs.meshcommander_version }} .
+      - name: Get Docker image tags
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: bendwyer/docker-meshcommander
+      - run: echo ${{ steps.meta.outputs.tags }}
