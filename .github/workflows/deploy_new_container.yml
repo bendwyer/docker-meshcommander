@@ -27,10 +27,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Fix incompatibilities
-        uses: hashicorp/packer-github-actions@master
-        with:
-          command: fix
       - name: Validate template
         uses: hashicorp/packer-github-actions@master
         with:
