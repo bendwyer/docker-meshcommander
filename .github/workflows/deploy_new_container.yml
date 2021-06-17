@@ -31,7 +31,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: bendwyer/docker-meshcommander:${{ needs.get_meshcommander_version.outputs.meshcommander_version }}
+          images: bendwyer/docker-meshcommander
           tags: |
-            type=sha
+            type=sha,pattern={{sha}}
+          flavor: |
+            latest=auto
+            suffix=_${{ needs.get_meshcommander_version.outputs.meshcommander_version }}
       - run: echo ${{ steps.meta.outputs.tags }}
