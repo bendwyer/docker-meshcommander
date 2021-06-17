@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   meshcommander:
-    image: bendwyer/meshcommander
+    image: bendwyer/docker-meshcommander
     container_name: meshcommander
     restart: always
     ports:
