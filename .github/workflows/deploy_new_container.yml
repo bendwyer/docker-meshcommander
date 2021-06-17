@@ -14,12 +14,6 @@ jobs:
         id: get_version
     outputs:
       meshcommander_version: ${{ steps.get_version.outputs.version }}
-  check_meshcommander_version:
-    name: Check MeshCommander version
-    runs-on: ubuntu-latest
-    needs: get_meshcommander_version
-    steps:
-      - run: echo ${{ needs.get_meshcommander_version.outputs.meshcommander_version }}
   build_container:
     name: Build container
     runs-on: ubuntu-latest
@@ -27,13 +21,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Validate template
+      - name: Packer init
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: init
+          target: .
+      - name: Packer validate
         uses: hashicorp/packer-github-actions@master
         with:
           command: validate
           arguments: -syntax-only
           target: .
-      - name: Build artifact
+      - name: Packer build
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
