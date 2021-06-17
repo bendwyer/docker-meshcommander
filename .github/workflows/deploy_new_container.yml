@@ -1,6 +1,10 @@
 ---
 name: deploy_new_container
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  create:
+    tags:
+       - '*'
 jobs:
   get_meshcommander_version:
     name: Get MeshCommander version
@@ -34,6 +38,7 @@ jobs:
           images: bendwyer/docker-meshcommander
           tags: |
             type=sha,prefix=
+            type=semver,pattern={{version}}
           flavor: |
             latest=auto
             suffix=_${{ needs.get_meshcommander_version.outputs.meshcommander_version }}
