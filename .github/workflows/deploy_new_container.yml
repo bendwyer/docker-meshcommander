@@ -20,3 +20,28 @@ jobs:
     needs: get_meshcommander_version
     steps:
       - run: echo ${{ needs.get_meshcommander_version.outputs.meshcommander_version }}
+  build_container:
+    name: Build container
+    runs-on: ubuntu-latest
+    needs: check_meshcommander_version
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Fix incompatibilities
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: fix
+      - name: Validate template
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: validate
+          arguments: -syntax-only
+          target: meshcommander.pkr.hcl
+      - name: Build artifact
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: "-color=false -on-error=abort -var 'meshcommander_version=${{ needs.get_meshcommander_version.outputs.meshcommander_version }}'"
+          target: meshcommander.pkr.hcl
+        env:
+          PACKER_LOG: 1
