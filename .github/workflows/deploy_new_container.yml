@@ -33,8 +33,9 @@ jobs:
         with:
           images: bendwyer/docker-meshcommander
           tags: |
-            type=sha,pattern={{sha}}
+            type=sha
           flavor: |
             latest=auto
+            prefix=
             suffix=_${{ needs.get_meshcommander_version.outputs.meshcommander_version }}
       - run: echo ${{ steps.meta.outputs.tags }}
