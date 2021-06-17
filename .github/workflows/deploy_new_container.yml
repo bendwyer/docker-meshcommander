@@ -36,6 +36,6 @@ jobs:
             type=sha
           flavor: |
             latest=auto
-            prefix=
+            prefix=''
             suffix=_${{ needs.get_meshcommander_version.outputs.meshcommander_version }}
       - run: echo ${{ steps.meta.outputs.tags }}
