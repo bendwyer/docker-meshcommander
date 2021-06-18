@@ -1,5 +1,5 @@
 ---
-name: Check MeshCommander verion
+name: Check MeshCommander version
 on:
   workflow_dispatch:
   schedule:
@@ -24,5 +24,5 @@ jobs:
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
-          event-type: build
+          event-type: bump_meshcommander_version
           client-payload: '{"meshcommander_version": "${{ steps.version.outputs.mc_version }}"}'
