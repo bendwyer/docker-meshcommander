@@ -36,7 +36,7 @@ jobs:
             suffix=_${{ steps.version.outputs.mc_version }}
     outputs:
       meshcommander_version: ${{ steps.version.outputs.mc_version }}
-      docker_metadata: ${{ steps.meta.outputs.tags }}
+      docker_metadata: ${{ steps.meta.outputs.version }}
   build_container:
     name: Build container
     runs-on: ubuntu-latest
