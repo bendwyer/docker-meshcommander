@@ -29,11 +29,12 @@ build {
       "npm install meshcommander@${var.meshcommander_version}"
     ]
   }
+
   post-processors {
     post-processor "docker-tag" {
       repository = "bendwyer/docker-meshcommander"
       tags = [
-        "${var.meshcommander_version}"
+        var.docker_tags
       ]
     }
   }
