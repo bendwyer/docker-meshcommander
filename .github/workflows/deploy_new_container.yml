@@ -27,7 +27,7 @@ jobs:
       - uses: docker/metadata-action@v3
         id: meta
         with:
-          images: bendwyer/docker-meshcommander
+          images: $GITHUB_REPOSITORY
           tags: |
             type=sha,prefix=
             type=semver,pattern={{version}}
@@ -61,4 +61,14 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push
         run: |
-          docker image push --all-tags bendwyer/docker-meshcommander
+          docker image push --all-tags $GITHUB_REPOSITORY
+  push_description:
+      name: Push Docker Hub description
+      runs-on: ubuntu-latest
+      steps:
+        - uses: peter-evans/dockerhub-description@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_PASSWORD }}
+            repository: $GITHUB_REPOSITORY
+            short-description: ${{ github.event.repository.description }}
