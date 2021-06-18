@@ -59,16 +59,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Push
+      - name: Push image to Docker Hub
         run: |
           docker image push --all-tags $GITHUB_REPOSITORY
-  push_description:
-      name: Push Docker Hub description
-      runs-on: ubuntu-latest
-      steps:
-        - uses: peter-evans/dockerhub-description@v2
-          with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_PASSWORD }}
-            repository: $GITHUB_REPOSITORY
-            short-description: ${{ github.event.repository.description }}
+      - name: Push description to Docker Hub
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: $GITHUB_REPOSITORY
+          short-description: ${{ github.event.repository.description }}
