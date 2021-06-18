@@ -9,7 +9,7 @@ on:
     branches: [$default-branch]
     tags: ['v*']
   repository_dispatch:
-    types: [build]
+    types: [bump_meshcommander_version]
   workflow_dispatch:
 jobs:
   generate_metadata:
