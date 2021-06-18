@@ -27,7 +27,7 @@ jobs:
       - uses: docker/metadata-action@v3
         id: meta
         with:
-          images: ${GITHUB_REPOSITORY}
+          images: bendwyer/docker-meshcommander
           tags: |
             type=sha,prefix=
             type=semver,pattern={{version}}
@@ -61,4 +61,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push
         run: |
-          docker image push --all-tags ${GITHUB_REPOSITORY}
+          docker image push --all-tags bendwyer/docker-meshcommander
