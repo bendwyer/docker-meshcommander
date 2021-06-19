@@ -19,7 +19,7 @@ jobs:
         run: echo "::set-output name=npm_mc_version::$(latest-version meshcommander)"
         id: npm
       - name: Query Docker Hub for latest version of container
-        run: echo "::set-output name=docker_mc_version::$(curl -s "https://hub.docker.com/v2/repositories/bendwyer/docker-meshcommander/tags/" | jq '[.results |= sort_by(.last_updated) | .results | .[] | select(.name != "latest") | .name] | last | split("_")[1]')"
+        run: echo "::set-output name=docker_mc_version::$(curl -s "https://hub.docker.com/v2/repositories/bendwyer/docker-meshcommander/tags/" | jq -r '[.results |= sort_by(.last_updated) | .results | .[] | select(.name != "latest") | .name] | last | split("_")[1]')"
         id: docker
       - name: Trigger build_and_deploy workflow if npm MeshCommander version is newer
         uses: peter-evans/repository-dispatch@v1
