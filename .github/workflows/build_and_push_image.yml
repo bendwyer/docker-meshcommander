@@ -1,8 +1,6 @@
 ---
 name: Build and push image
 on:
-  create:
-    tags: ['v*']
   pull_request:
     branches: [$default-branch]
   push:
@@ -54,8 +52,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push image to Docker Hub
         if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          docker image push --all-tags ${{ github.repository }}
+        run: docker image push --all-tags ${{ github.repository }}
       - name: Push description to Docker Hub
         if: ${{ github.event_name != 'pull_request' }}
         uses: peter-evans/dockerhub-description@v2
