@@ -1,15 +1,10 @@
 ---
 name: Build and push image
 on:
-  create:
-    tags: ['v*']
-  pull_request:
-    branches: [$default-branch]
-  push:
-    branches: [$default-branch]
-    tags: ['v*']
   repository_dispatch:
-    types: [bump_meshcommander_version]
+    types:
+      - bump_meshcommander_version
+      - bump_docker_image_version
   workflow_dispatch:
 jobs:
   generate_metadata:
@@ -22,7 +17,6 @@ jobs:
         with:
           images: ${{ github.repository }}
           tags: |
-            type=sha,prefix=
             type=semver,pattern={{version}}
           flavor: |
             latest=auto
@@ -47,17 +41,16 @@ jobs:
           -var docker_tags=${{ needs.generate_metadata.outputs.docker_metadata }} \
           .
       - name: Login to DockerHub
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event.client_payload.action_trigger != 'pull_request' }}
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push image to Docker Hub
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          docker image push --all-tags ${{ github.repository }}
+        if: ${{ github.event.client_payload.action_trigger != 'pull_request' }}
+        run: docker image push --all-tags ${{ github.repository }}
       - name: Push description to Docker Hub
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event.client_payload.action_trigger != 'pull_request' }}
         uses: peter-evans/dockerhub-description@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}

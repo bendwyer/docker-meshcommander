@@ -33,9 +33,7 @@ build {
   post-processors {
     post-processor "docker-tag" {
       repository = "bendwyer/docker-meshcommander"
-      tags = [
-        var.docker_tags
-      ]
+      tags = var.docker_tags
     }
   }
 }

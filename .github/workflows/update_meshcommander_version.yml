@@ -1,0 +1,31 @@
+---
+name: Update MeshCommander version
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '35 7 * * *'
+jobs:
+  get_meshcommander_version:
+    name: Get MeshCommander version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install latest-version-cli package
+        run: npm install --global latest-version-cli
+      - name: Get latest MeshCommander package version and set to variable
+        run: echo "::set-output name=npm_mc_version::$(latest-version meshcommander)"
+        id: npm
+      - name: Query Docker Hub for latest version of container
+        run: echo "::set-output name=docker_mc_version::$(curl -s "https://hub.docker.com/v2/repositories/bendwyer/docker-meshcommander/tags/" | jq -r '[.results |= sort_by(.last_updated) | .results | .[] | select(.name != "latest") | .name] | last | split("_")[1]')"
+        id: docker
+      - name: Trigger build_and_push_image action if npm MeshCommander version is newer
+        uses: peter-evans/repository-dispatch@v1
+        if: ${{ steps.npm.outputs.npm_mc_version != steps.docker.outputs.docker_mc_version }}
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: ${{ github.repository }}
+          event-type: bump_meshcommander_version
+          client-payload: '{"meshcommander_version": "${{ steps.npm.outputs.npm_mc_version }}"}'
