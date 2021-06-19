@@ -17,7 +17,7 @@ This repository uses GitHub Actions to build and push new versions of the `docke
 Check for the [latest version](https://www.npmjs.com/package/meshcommander?activeTab=versions) of MeshCommander and add that to the `packer build` command.
 
 ```bash
-packer build -var "meshcommander_version=0.9.0-d" -var "docker_tags=latest" . 
+packer build -var='meshcommander_version=0.9.0-d' -var='docker_tags=["latest"]' .
 ```
 
 Run
