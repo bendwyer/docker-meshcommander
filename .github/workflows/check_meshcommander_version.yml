@@ -23,7 +23,7 @@ jobs:
         id: docker
       - name: Trigger build_and_deploy workflow if npm MeshCommander version is newer
         uses: peter-evans/repository-dispatch@v1
-        if: ${{ steps.npm.outputs.npm_mc_version != 'steps.docker.outputs.docker_mc_version' }}
+        if: ${{ steps.npm.outputs.npm_mc_version != steps.docker.outputs.docker_mc_version }}
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
