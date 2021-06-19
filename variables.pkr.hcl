@@ -2,5 +2,5 @@ variable "meshcommander_version" {
   type = string
 }
 variable "docker_tags" {
-  type = list
+  type = list(string)
 }
