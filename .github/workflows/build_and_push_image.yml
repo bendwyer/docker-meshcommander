@@ -54,14 +54,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # - name: Push image to Docker Hub
-      #   if: github.event_name != 'pull_request' || github.event_name != 'workflow_dispatch'
-      #   run: docker image push --all-tags ${{ github.repository }}
-      # - name: Push description to Docker Hub
-      #   if: github.event_name != 'pull_request' || github.event_name != 'workflow_dispatch'
-      #   uses: peter-evans/dockerhub-description@v2
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      #     repository: ${{ github.repository }}
-      #     short-description: ${{ github.event.repository.description }}
+      - name: Push image to Docker Hub
+        if: ${{ github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' }}
+        run: docker image push --all-tags ${{ github.repository }}
+      - name: Push description to Docker Hub
+        if: ${{ github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' }}
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: ${{ github.repository }}
+          short-description: ${{ github.event.repository.description }}
