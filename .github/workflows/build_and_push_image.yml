@@ -29,9 +29,11 @@ jobs:
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         id: tag
       - name: Strip v from version tag
+      - id: get-id
         run: |
           id=$(echo ${{ steps.tag.outputs.tag }} | cut -dv -f1)
-          echo $id
+          echo "::set-output name=id::$id"
+      - run: echo "${{steps.get-id.outputs.id}}"
       # - name: Generate Docker tags
       #   uses: docker/metadata-action@v3
       #   id: meta
@@ -69,8 +71,8 @@ jobs:
           .
       - name: Login to DockerHub
         if: |
-          github.event_name != 'pull_request' || 
-          github.event_name != 'workflow_dispatch'
+          (github.event_name != 'pull_request') || 
+          (github.event_name != 'workflow_dispatch')
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
