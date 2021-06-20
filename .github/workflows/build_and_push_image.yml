@@ -21,6 +21,9 @@ jobs:
       - name: Get latest MeshCommander package version and set to variable
         run: echo "::set-output name=npm_mc_version::$(latest-version meshcommander)"
         id: npm
+      - name: Get current repository tag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        id: tag
       - name: Generate Docker tags
         uses: docker/metadata-action@v3
         id: meta
@@ -29,7 +32,7 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=ref,event=pr
-            type=raw,value=${GITHUB_REF#refs/*/}
+            type=raw,value=${{ steps.tag.outputs.tag }}
           flavor: |
             latest=true
             suffix=_${{ steps.npm.outputs.npm_mc_version }}
