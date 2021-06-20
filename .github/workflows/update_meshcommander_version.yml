@@ -28,4 +28,3 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
           event-type: bump_meshcommander_version
-          client-payload: '{"meshcommander_version": "${{ steps.npm.outputs.npm_mc_version }}"}'
