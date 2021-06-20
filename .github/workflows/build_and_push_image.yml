@@ -33,7 +33,7 @@ jobs:
         id: semver
         with:
           msg: ${{ steps.tag.outputs.tag }}
-          separator: 'v'
+          seperator: 'v' #https://github.com/JungWinter/split/issues/4
     outputs:
       current_tag: ${{ steps.semver.outputs._1 }}
       meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
