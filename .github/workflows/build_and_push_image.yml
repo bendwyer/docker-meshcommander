@@ -26,10 +26,16 @@ jobs:
         with:
           fetch-depth: 0
       - name: Get current repository tag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        uses: WyriHaximus/github-action-get-previous-tag@v1
         id: tag
+      - name: Split tag
+        uses: jungwinter/split@v1
+        id: semver
+        with:
+          msg: ${{ steps.tag.outputs.tag }}
+          separator: 'v'
     outputs:
-      current_tag: ${{ steps.tag.outputs.tag }}
+      current_tag: ${{ steps.semver.outputs._1 }}
       meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
   build_push_image:
     name: Build and push image
