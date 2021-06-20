@@ -3,6 +3,13 @@ docker-meshcommander
 
 Dockerized MeshCommander.
 
+Source repository
+-----------------
+
+[![Build and push image](https://github.com/bendwyer/docker-meshcommander/actions/workflows/build_and_push_image.yml/badge.svg)](https://github.com/bendwyer/docker-meshcommander/actions/workflows/build_and_push_image.yml)
+
+[bendwyer/docker-meshcommander](https://github.com/bendwyer/docker-meshcommander)
+
 Build
 -----
 
@@ -10,7 +17,7 @@ This image is built using [Packer](https://www.packer.io/).
 
 ### Automated build
 
-This repository uses GitHub Actions to build and push new versions of the `docker-meshcommander` image to Docker Hub. New builds are triggered by either an update to this repository or an update to the MeshCommander npm package version.
+GitHub Actions are leveraged to build and push new versions of the `docker-meshcommander` image to Docker Hub. New builds are triggered either by new tagged releases on GitHub or an update to the MeshCommander npm package version.
 
 ### Manual build
 
