@@ -1,30 +1,46 @@
 ---
 name: Build and push image
 on:
+  pull_request:
+    branches: [main]
+    tags: ['v*']
+  push:
+    branches: ['*']
   repository_dispatch:
-    types:
-      - bump_meshcommander_version
-      - bump_docker_image_version
+    types: [bump_meshcommander_version]
   workflow_dispatch:
 jobs:
   generate_metadata:
     name: Generate metadata
     runs-on: ubuntu-latest
     steps:
-      - name: Generate Docker tags
-        uses: docker/metadata-action@v3
-        id: meta
+      - name: Install node
+        uses: actions/setup-node@v2
         with:
-          images: ${{ github.repository }}
-          tags: |
-            type=semver,pattern={{version}}
-          flavor: |
-            latest=auto
-            suffix=_${{ github.event.client_payload.meshcommander_version }}
+          node-version: '14'
+      - name: Install latest-version-cli package
+        run: npm install --global latest-version-cli
+      - name: Get latest MeshCommander package version and set to variable
+        run: echo "::set-output name=npm_mc_version::$(latest-version meshcommander)"
+        id: npm
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get current repository tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        id: tag
+      - name: Split tag
+        uses: jungwinter/split@v1
+        id: semver
+        with:
+          msg: ${{ steps.tag.outputs.tag }}
+          seperator: 'v' #https://github.com/JungWinter/split/issues/4
     outputs:
-      docker_metadata: ${{ steps.meta.outputs.version }}
-  build_push_container:
-    name: Build and push container
+      current_tag: ${{ steps.semver.outputs._1 }}
+      meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
+  build_push_image:
+    name: Build and push image
     runs-on: ubuntu-latest
     needs: generate_metadata
     steps:
@@ -37,20 +53,20 @@ jobs:
       - name: Packer build
         run: |
           packer build -color=false -on-error=abort \
-          -var meshcommander_version=${{ github.event.client_payload.meshcommander_version }} \
-          -var docker_tags=${{ needs.generate_metadata.outputs.docker_metadata }} \
+          -var='meshcommander_version=${{ needs.generate_metadata.outputs.meshcommander_version }}' \
+          -var='docker_tags=["${{ needs.generate_metadata.outputs.current_tag }}_${{ needs.generate_metadata.outputs.meshcommander_version }}","latest"]' \
           .
       - name: Login to DockerHub
-        if: ${{ github.event.client_payload.action_trigger != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && github.event_name != 'push' }}
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push image to Docker Hub
-        if: ${{ github.event.client_payload.action_trigger != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && github.event_name != 'push' }}
         run: docker image push --all-tags ${{ github.repository }}
       - name: Push description to Docker Hub
-        if: ${{ github.event.client_payload.action_trigger != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && github.event_name != 'push' }}
         uses: peter-evans/dockerhub-description@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
