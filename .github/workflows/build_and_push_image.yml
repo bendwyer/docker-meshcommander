@@ -28,23 +28,24 @@ jobs:
       - name: Get current repository tag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         id: tag
-      - name: Generate Docker tags
-        uses: docker/metadata-action@v3
-        id: meta
-        with:
-          images: ${{ github.repository }}
-          tags: |
-            type=semver,pattern={{version}}
-            type=ref,event=pr
-            type=raw,value=${{ steps.tag.outputs.tag }}
-          flavor: |
-            latest=true
-            suffix=_${{ steps.npm.outputs.npm_mc_version }}
-      #- run: cat ${{ steps.meta.outputs.bake-file }} | jq
-      - run: echo ${{ fromJSON(steps.meta.outputs.json).labels }}
+      # - name: Generate Docker tags
+      #   uses: docker/metadata-action@v3
+      #   id: meta
+      #   with:
+      #     images: ${{ github.repository }}
+      #     tags: |
+      #       type=semver,pattern={{version}}
+      #       type=ref,event=pr
+      #       type=raw,value=${{ steps.tag.outputs.tag }}
+      #     flavor: |
+      #       latest=true
+      #       suffix=_${{ steps.npm.outputs.npm_mc_version }}
+      # #- run: cat ${{ steps.meta.outputs.bake-file }} | jq
+      # - run: echo ${{ fromJSON(steps.meta.outputs.json).labels }}
     outputs:
+      current_tag: ${{ steps.tag.outputs.tag }}
       meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
-      docker_metadata: ${{ fromJSON(steps.meta.outputs.json).tags }}
+      # docker_metadata: ${{ fromJSON(steps.meta.outputs.json).tags }}
   build_push_container:
     name: Build and push container
     runs-on: ubuntu-latest
@@ -60,7 +61,7 @@ jobs:
         run: |
           packer build -color=false -on-error=abort \
           -var meshcommander_version=${{ needs.generate_metadata.outputs.meshcommander_version }} \
-          -var docker_tags=${{ needs.generate_metadata.outputs.docker_metadata }} \
+          -var docker_tags=["${{ needs.generate_metadata.outputs.current_tag }}_${{ needs.generate_metadata.outputs.meshcommander_version }}","latest"] \
           .
       - name: Login to DockerHub
         if: ${{ github.event_name != 'pull_request' || github.event_name != 'workflow_dispatch' }}
