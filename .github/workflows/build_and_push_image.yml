@@ -41,10 +41,10 @@ jobs:
             latest=true
             suffix=_${{ steps.npm.outputs.npm_mc_version }}
       # - run: echo ${{ fromJson(steps.meta.outputs.json).tags }}
-      - run: echo ${{ steps.meta.outputs.tags }}
+      # - run: echo ${{ steps.meta.outputs.tags }}
     outputs:
       meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
-      docker_metadata: ${{ steps.meta.outputs.version }}
+      docker_metadata: ${{ steps.meta.outputs.tags }}
   build_push_container:
     name: Build and push container
     runs-on: ubuntu-latest
