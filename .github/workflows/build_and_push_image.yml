@@ -1,16 +1,26 @@
 ---
 name: Build and push image
 on:
+  pull_request:
+    branches: [main]
+    tags: ['v*']
   repository_dispatch:
-    types:
-      - bump_meshcommander_version
-      - bump_docker_image_version
+    types: [bump_meshcommander_version]
   workflow_dispatch:
 jobs:
   generate_metadata:
     name: Generate metadata
     runs-on: ubuntu-latest
     steps:
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install latest-version-cli package
+        run: npm install --global latest-version-cli
+      - name: Get latest MeshCommander package version and set to variable
+        run: echo "::set-output name=npm_mc_version::$(latest-version meshcommander)"
+        id: npm
       - name: Generate Docker tags
         uses: docker/metadata-action@v3
         id: meta
@@ -18,10 +28,12 @@ jobs:
           images: ${{ github.repository }}
           tags: |
             type=semver,pattern={{version}}
+            type=ref,event=pr
           flavor: |
             latest=auto
-            suffix=_${{ github.event.client_payload.meshcommander_version }}
+            suffix=_${{ steps.npm.outputs.npm_mc_version }}
     outputs:
+      meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
       docker_metadata: ${{ steps.meta.outputs.version }}
   build_push_container:
     name: Build and push container
@@ -37,20 +49,20 @@ jobs:
       - name: Packer build
         run: |
           packer build -color=false -on-error=abort \
-          -var meshcommander_version=${{ github.event.client_payload.meshcommander_version }} \
+          -var meshcommander_version=${{ needs.generate_metadata.outputs.meshcommander_version }} \
           -var docker_tags=${{ needs.generate_metadata.outputs.docker_metadata }} \
           .
       - name: Login to DockerHub
-        if: ${{ github.event.client_payload.action_trigger != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' || github.event_name != 'workflow_dispatch' }}
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push image to Docker Hub
-        if: ${{ github.event.client_payload.action_trigger != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' || github.event_name != 'workflow_dispatch' }}
         run: docker image push --all-tags ${{ github.repository }}
       - name: Push description to Docker Hub
-        if: ${{ github.event.client_payload.action_trigger != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' || github.event_name != 'workflow_dispatch'}}
         uses: peter-evans/dockerhub-description@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
