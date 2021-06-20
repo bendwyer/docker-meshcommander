@@ -27,8 +27,9 @@ jobs:
           fetch-depth: 0
       - name: Get current repository tag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        run: echo ${{ steps.tag.outputs.tag }} | cut -dv -f1
         id: tag
+      - name: Strip v from version tag
+        run: echo ${{ steps.tag.outputs.tag }} | cut -dv -f1
       # - name: Generate Docker tags
       #   uses: docker/metadata-action@v3
       #   id: meta
