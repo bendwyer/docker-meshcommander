@@ -40,7 +40,7 @@ jobs:
           flavor: |
             latest=true
             suffix=_${{ steps.npm.outputs.npm_mc_version }}
-      # - run: echo ${{ fromJSON(steps.meta.outputs.json).tags }}
+      - run: echo ${{ fromJSON(steps.meta.outputs.json) }}
     outputs:
       meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
       docker_metadata: ${{ fromJSON(steps.meta.outputs.json).tags }}
