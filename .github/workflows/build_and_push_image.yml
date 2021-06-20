@@ -23,6 +23,8 @@ jobs:
         id: npm
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Get current repository tag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         id: tag
