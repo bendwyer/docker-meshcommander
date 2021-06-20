@@ -21,7 +21,11 @@ GitHub Actions are leveraged to build and push new versions of the `docker-meshc
 
 ### Manual build
 
-Check for the [latest version](https://www.npmjs.com/package/meshcommander?activeTab=versions) of MeshCommander and add that to the `packer build` command.
+Clone the [latest version](https://github.com/bendwyer/docker-meshcommander.git) of the repository.
+
+Check for the [latest version](https://www.npmjs.com/package/meshcommander?activeTab=versions) of MeshCommander.
+
+Run the `packer build` command from the root of the cloned repository:
 
 ```bash
 packer build -var='meshcommander_version=0.9.0-d' -var='docker_tags=["latest"]' .
