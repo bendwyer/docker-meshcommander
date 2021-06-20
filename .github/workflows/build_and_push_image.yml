@@ -29,8 +29,9 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=ref,event=pr
+            type=raw,value=${GITHUB_REF#refs/*/}
           flavor: |
-            latest=auto
+            latest=true
             suffix=_${{ steps.npm.outputs.npm_mc_version }}
     outputs:
       meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
