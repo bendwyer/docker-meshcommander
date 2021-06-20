@@ -41,7 +41,7 @@ jobs:
             latest=true
             suffix=_${{ steps.npm.outputs.npm_mc_version }}
       #- run: cat ${{ steps.meta.outputs.bake-file }} | jq
-      - run: echo ${{ fromJson(steps.meta.outputs.json) }}
+      - run: echo ${{ fromJSON(steps.meta.outputs.json).labels }}
     outputs:
       meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
       docker_metadata: ${{ fromJSON(steps.meta.outputs.json).tags }}
