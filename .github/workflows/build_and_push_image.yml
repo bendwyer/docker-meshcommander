@@ -40,7 +40,8 @@ jobs:
           flavor: |
             latest=true
             suffix=_${{ steps.npm.outputs.npm_mc_version }}
-      - run: cat ${{ steps.meta.outputs.bake-file }} | jq '.target | .docker-metadata-action'
+      #- run: cat ${{ steps.meta.outputs.bake-file }} | jq
+      - run: cat ${{ fromJSON(steps.meta.outputs.json) }}
     outputs:
       meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
       docker_metadata: ${{ fromJSON(steps.meta.outputs.json).tags }}
