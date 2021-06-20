@@ -27,6 +27,7 @@ jobs:
           fetch-depth: 0
       - name: Get current repository tag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        run: echo ${{ steps.tag.outputs.tag }} | cut -dv -f1
         id: tag
       # - name: Generate Docker tags
       #   uses: docker/metadata-action@v3
@@ -43,7 +44,7 @@ jobs:
       # #- run: cat ${{ steps.meta.outputs.bake-file }} | jq
       # - run: echo ${{ fromJSON(steps.meta.outputs.json).labels }}
     outputs:
-      current_tag: ${{ steps.tag.outputs.tag }} | cut -dv -f1
+      current_tag: ${{ steps.tag.outputs.tag }}
       meshcommander_version: ${{ steps.npm.outputs.npm_mc_version }}
       # docker_metadata: ${{ fromJSON(steps.meta.outputs.json).tags }}
   build_push_container:
